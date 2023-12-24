@@ -1,2 +1,26 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script lang="ts">
+	import { goto } from '$app/navigation';
+
+	let domain: string = '';
+	let identifier: string = '';
+
+	const submit = () => {
+		if (domain && identifier) {
+			goto(`/${identifier}@${domain}`);
+		}
+	};
+</script>
+
+<form class="mx-auto max-w-96" on:submit|preventDefault={submit}>
+	<label class="label">
+		<span>Domain</span>
+		<input class="input" type="text" placeholder="bipa.app" bind:value={domain} />
+	</label>
+
+	<label class="label">
+		<span>Identifier</span>
+		<input class="input" type="text" placeholder="lsunsi" bind:value={identifier} />
+	</label>
+
+	<button type="submit" class="variant-filled btn">Submit</button>
+</form>

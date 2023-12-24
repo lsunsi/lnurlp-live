@@ -1,3 +1,4 @@
+import forms from '@tailwindcss/forms';
 import type { Config } from 'tailwindcss';
 import { join } from 'path';
 import { skeleton } from '@skeletonlabs/tw-plugin';
@@ -14,5 +15,5 @@ export default {
 	theme: {
 		extend: {},
 	},
-	plugins: [skeleton({ themes: { preset: ["hamlindigo"] } })]
+	plugins: [forms, skeleton({ themes: { preset: ["hamlindigo"] } })]
 } satisfies Config;
