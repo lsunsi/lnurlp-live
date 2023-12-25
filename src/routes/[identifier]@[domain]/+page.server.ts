@@ -1,10 +1,7 @@
 import type { Actions, PageServerLoad } from "./$types";
 import { callback, entrypoint } from "$lib";
 
-export const load: PageServerLoad = async ({ params }) => {
-	const e = await entrypoint(`https://${params.domain}/.well-known/lnurlp/${params.identifier}`)
-	return { e };
-}
+export const load: PageServerLoad = ({ params }) => entrypoint(`https://${params.domain}/.well-known/lnurlp/${params.identifier}`);
 
 export const actions = {
 	default: async ({ request }) => {

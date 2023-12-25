@@ -4,9 +4,9 @@
 	let domain: string = '';
 	let identifier: string = '';
 
-	const submit = () => {
+	const submit = async () => {
 		if (domain && identifier) {
-			goto(`/${identifier}@${domain}`);
+			await goto(`/${identifier}@${domain}`);
 		}
 	};
 </script>
