@@ -34,6 +34,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"bolt11": "^1.4.1",
 		"zod": "^3.22.4"
 	}
 }
