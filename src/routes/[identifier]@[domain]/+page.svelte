@@ -7,17 +7,35 @@
 
 	let amount: string = '';
 	let comment: string = '';
+
 	let code: string = '';
+	let convert: string = '';
+
+	const convertibles = data.currencies.filter((c) => c.convertible);
 
 	$: currency = data.currencies.find((c) => c.code == code);
+	$: convertible = convertibles.find((c) => c.code == convert);
 
 	const submit = () => {
 		if (amount) {
+			const query = new URLSearchParams();
+
+			if (comment.length > 0) {
+				query.append('comment', comment);
+			}
+
+			if (convertible) {
+				query.append('convert', convertible.code);
+				query.append('decimals', convertible.decimals.toString());
+				query.append('symbol', convertible.symbol);
+				query.append('name', convertible.name);
+			}
+
 			const a = currency
 				? `${Math.trunc(+amount * 10 ** currency.decimals)}.${currency.code}`
 				: (+amount * 1000).toString();
 
-			goto(`/${a}-${btoa(data.callback)}?comment=${comment}`);
+			goto(`/${a}-${btoa(data.callback)}?${query}`);
 		}
 	};
 </script>
@@ -47,10 +65,19 @@
 
 	<label class="label">
 		<span>Amount</span>
-		<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
-			{#if currency}
-				<div class="input-group-shim">{currency.symbol}</div>
+		<div
+			class="input-group input-group-divider"
+			class:grid-cols-[auto_1fr_auto]={data.currencies.length > 0}
+		>
+			{#if data.currencies.length > 0}
+				<select bind:value={code} class="select">
+					<option value="">sats</option>
+					{#each data.currencies as { code, symbol }}
+						<option value={code}>{symbol}</option>
+					{/each}
+				</select>
 			{/if}
+
 			<input
 				class="input"
 				type="number"
@@ -59,14 +86,21 @@
 				min={data.minSendable / 1000}
 				max={data.maxSendable / 1000}
 			/>
-			<select bind:value={code}>
-				<option value="">sats</option>
-				{#each data.currencies as { code, name }}
-					<option value={code}>{name}</option>
-				{/each}
-			</select>
 		</div>
 	</label>
+
+	{#if convertibles.length > 0}
+		<label class="label">
+			<span>Received as</span>
+
+			<select bind:value={convert} class="select">
+				<option value="">sats</option>
+				{#each convertibles as { code, symbol, name }}
+					<option value={code}>{name} ({symbol})</option>
+				{/each}
+			</select>
+		</label>
+	{/if}
 
 	{#if data.commentAllowed > 0}
 		<label class="label">

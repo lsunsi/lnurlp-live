@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { PageServerData } from './$types';
+	import { invalidateAll } from '$app/navigation';
 
 	export let data: PageServerData;
 
-	const expiresAt = data.decoded.timeExpireDate && new Date(data.decoded.timeExpireDate * 1000);
+	$: expiresAt = data.decoded.timeExpireDate && new Date(data.decoded.timeExpireDate * 1000);
 	let expiresIn = expiresAt && Math.trunc((+expiresAt - +new Date()) / 1000);
 
 	onMount(() => {
@@ -22,10 +23,24 @@
 
 <div class="flex place-content-center gap-x-2">
 	<span class="variant-ghost badge">{data.decoded.satoshis} satoshis</span>
+
+	{#if data.converted && data.decimals && data.symbol && data.name}
+		<span class="variant-ghost badge" title={data.name}>
+			{data.symbol}
+			{(data.converted / 10 ** data.decimals).toFixed(data.decimals)}
+		</span>
+	{/if}
+
 	{#if expiresIn && expiresIn > 0}
 		<span class="variant-ghost badge">Expires in {expiresIn} seconds</span>
 	{:else if expiresIn === 0}
-		<span class="variant-filled-error badge">Expired</span>
+		<span
+			class="variant-filled-error badge cursor-pointer"
+			on:click={() => invalidateAll()}
+			role="none"
+		>
+			Expired
+		</span>
 	{/if}
 </div>
 

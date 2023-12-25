@@ -25,14 +25,19 @@ export const entrypoint = async (url: string): Promise<Entrypoint> => fetch(url)
 type Callback = z.infer<typeof Callback>;
 
 const Callback = z.object({
-	pr: z.string()
+	pr: z.string(),
+	converted: z.number().optional()
 });
 
-export const callback = async (url: string, amount: string, comment: string | null): Promise<Callback> => {
+export const callback = async (url: string, amount: string, comment: string | null, convert: string | null): Promise<Callback> => {
 	const query = new URLSearchParams({ amount, });
 
 	if (comment) {
 		query.append('comment', comment);
+	}
+
+	if (convert) {
+		query.append('convert', convert);
 	}
 
 	return fetch(`${url}?${query}`).then(a => a.json()).then(Callback.parse);
