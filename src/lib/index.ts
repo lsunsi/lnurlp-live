@@ -20,6 +20,14 @@ const Callback = z.object({
 	pr: z.string()
 });
 
-export const callback = async (url: string, amount: number): Promise<Callback> => fetch(`${url}?${new URLSearchParams({
-	amount: amount.toString()
-})}`).then(a => a.json()).then(Callback.parse);
+export const callback = async (url: string, amount: number, comment: string | null): Promise<Callback> => {
+	const query = new URLSearchParams({
+		amount: amount.toString(),
+	});
+
+	if (comment) {
+		query.append('comment', comment);
+	}
+
+	return fetch(`${url}?${query}`).then(a => a.json()).then(Callback.parse);
+}

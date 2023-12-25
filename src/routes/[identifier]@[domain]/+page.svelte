@@ -6,10 +6,11 @@
 	export let data: PageServerData;
 
 	let amount: string = '';
+	let comment: string = '';
 
 	const submit = () => {
 		if (amount) {
-			goto(`/${amount}-${btoa(data.callback)}`);
+			goto(`/${amount}-${btoa(data.callback)}?comment=${comment}`);
 		}
 	};
 </script>
@@ -34,13 +35,28 @@
 	{/if}
 </div>
 
-<form on:submit|preventDefault={submit}>
+<form on:submit|preventDefault={submit} class="pt-4">
 	<input type="hidden" name="callback" value={data.callback} />
 
 	<label class="label">
 		<span>Sats</span>
-		<input class="input" type="number" name="amount" placeholder="123" bind:value={amount} />
+		<input class="input" type="number" placeholder="123" bind:value={amount} />
 	</label>
 
-	<button type="submit" class="variant-filled btn">Submit</button>
+	{#if data.commentAllowed && data.commentAllowed > 0}
+		<label class="label">
+			<span>Comment</span>
+			<input
+				type="text"
+				class="input"
+				placeholder="hey there"
+				maxlength={data.commentAllowed}
+				bind:value={comment}
+			/>
+		</label>
+	{/if}
+
+	<div class="end-0 flex justify-end pt-4">
+		<button type="submit" class="variant-filled btn">Submit</button>
+	</div>
 </form>
