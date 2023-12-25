@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { Avatar } from '@skeletonlabs/skeleton';
 	import type { PageServerData } from './$types';
 
 	export let data: PageServerData;
@@ -16,6 +17,22 @@
 <svelte:head>
 	<title>lnurlp live / how much?</title>
 </svelte:head>
+
+<div class="flex place-content-center pb-4">
+	{#if data.image64}
+		<Avatar src="data:{data.image64[0]}, {data.image64[1]}" width="w-32" rounded="rounded" />
+	{/if}
+</div>
+
+<div class="flex place-content-center gap-x-2">
+	{#if data.shortDescription}
+		<span class="variant-ghost badge">{data.shortDescription}</span>
+	{/if}
+
+	{#if data.identifier}
+		<span class="variant-ghost badge">{data.identifier}</span>
+	{/if}
+</div>
 
 <form on:submit|preventDefault={submit}>
 	<input type="hidden" name="callback" value={data.callback} />

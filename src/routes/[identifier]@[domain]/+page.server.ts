@@ -1,21 +1,17 @@
-import type { Actions, PageServerLoad } from "./$types";
-import { callback, entrypoint } from "$lib";
+import type { PageServerLoad } from "./$types";
+import { entrypoint } from "$lib";
 
-export const load: PageServerLoad = ({ params }) => entrypoint(`https://${params.domain}/.well-known/lnurlp/${params.identifier}`);
+export const load: PageServerLoad = async ({ params }) => {
+	const e = await entrypoint(`https://${params.domain}/.well-known/lnurlp/${params.identifier}`);
 
-export const actions = {
-	default: async ({ request }) => {
-		const data = await request.formData();
+	const shortDescription = e.metadata.find(([k]) => k === "text/plain");
+	const identifier = e.metadata.find(([k]) => k === "text/identifier");
+	const image64 = e.metadata.find(([k]) => k === "image/png;base64" || k === "image/jpeg;base64");
 
-		const url = data.get("callback")?.toString();
-		const amount = data.get("amount")?.toString();
-
-		if (!url || !amount) {
-			return { success: false };
-		}
-
-		const c = await callback(url, +amount * 1000);
-
-		return { success: true, pr: c.pr };
-	}
-} as Actions;
+	return {
+		...e,
+		shortDescription: shortDescription && shortDescription[1],
+		identifier: identifier && identifier[1],
+		image64,
+	};
+};
