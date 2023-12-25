@@ -11,6 +11,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>lnurlp live / who? where?</title>
+</svelte:head>
+
 <form class="mx-auto max-w-96" on:submit|preventDefault={submit}>
 	<label class="label">
 		<span>Domain</span>

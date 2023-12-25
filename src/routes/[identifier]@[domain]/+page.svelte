@@ -13,6 +13,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>lnurlp live / how much?</title>
+</svelte:head>
+
 <form on:submit|preventDefault={submit}>
 	<input type="hidden" name="callback" value={data.callback} />
 

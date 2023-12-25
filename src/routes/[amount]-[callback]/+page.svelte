@@ -16,6 +16,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>lnurlp live / here you go</title>
+</svelte:head>
+
 <div class="flex place-content-center gap-x-2">
 	<span class="variant-ghost badge">{data.decoded.satoshis} satoshis</span>
 	{#if expiresIn && expiresIn > 0}
