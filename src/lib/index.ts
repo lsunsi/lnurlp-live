@@ -9,7 +9,15 @@ const Entrypoint = z.object({
 	callback: z.string(),
 	minSendable: z.number(),
 	maxSendable: z.number(),
-	commentAllowed: z.number().nullable(),
+	commentAllowed: z.number().default(0),
+	currencies: z.object({
+		code: z.string(),
+		name: z.string(),
+		symbol: z.string(),
+		decimals: z.number(),
+		multiplier: z.number(),
+		convertible: z.boolean().default(false)
+	}).array().default([])
 });
 
 export const entrypoint = async (url: string): Promise<Entrypoint> => fetch(url).then(a => a.json()).then(Entrypoint.parse);
@@ -20,10 +28,8 @@ const Callback = z.object({
 	pr: z.string()
 });
 
-export const callback = async (url: string, amount: number, comment: string | null): Promise<Callback> => {
-	const query = new URLSearchParams({
-		amount: amount.toString(),
-	});
+export const callback = async (url: string, amount: string, comment: string | null): Promise<Callback> => {
+	const query = new URLSearchParams({ amount, });
 
 	if (comment) {
 		query.append('comment', comment);

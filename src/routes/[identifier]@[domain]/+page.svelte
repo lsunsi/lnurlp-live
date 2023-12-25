@@ -7,10 +7,17 @@
 
 	let amount: string = '';
 	let comment: string = '';
+	let code: string = '';
+
+	$: currency = data.currencies.find((c) => c.code == code);
 
 	const submit = () => {
 		if (amount) {
-			goto(`/${amount}-${btoa(data.callback)}?comment=${comment}`);
+			const a = currency
+				? `${Math.trunc(+amount * 10 ** currency.decimals)}.${currency.code}`
+				: (+amount * 1000).toString();
+
+			goto(`/${a}-${btoa(data.callback)}?comment=${comment}`);
 		}
 	};
 </script>
@@ -39,11 +46,29 @@
 	<input type="hidden" name="callback" value={data.callback} />
 
 	<label class="label">
-		<span>Sats</span>
-		<input class="input" type="number" placeholder="123" bind:value={amount} />
+		<span>Amount</span>
+		<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+			{#if currency}
+				<div class="input-group-shim">{currency.symbol}</div>
+			{/if}
+			<input
+				class="input"
+				type="number"
+				placeholder="123"
+				bind:value={amount}
+				min={data.minSendable / 1000}
+				max={data.maxSendable / 1000}
+			/>
+			<select bind:value={code}>
+				<option value="">sats</option>
+				{#each data.currencies as { code, name }}
+					<option value={code}>{name}</option>
+				{/each}
+			</select>
+		</div>
 	</label>
 
-	{#if data.commentAllowed && data.commentAllowed > 0}
+	{#if data.commentAllowed > 0}
 		<label class="label">
 			<span>Comment</span>
 			<input
