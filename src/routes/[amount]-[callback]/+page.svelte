@@ -19,6 +19,7 @@
 
 <svelte:head>
 	<title>lnurlp live / here you go</title>
+	<script src="https://unpkg.com/@bitjson/qr-code@1.0.2/dist/qr-code.js"></script>
 </svelte:head>
 
 <div class="flex place-content-center gap-x-2">

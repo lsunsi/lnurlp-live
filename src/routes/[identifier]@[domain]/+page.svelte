@@ -78,14 +78,7 @@
 				</select>
 			{/if}
 
-			<input
-				class="input"
-				type="number"
-				placeholder="123"
-				bind:value={amount}
-				min={data.minSendable / 1000}
-				max={data.maxSendable / 1000}
-			/>
+			<input class="input" type="number" placeholder="123" bind:value={amount} />
 		</div>
 	</label>
 
@@ -95,8 +88,21 @@
 
 			<select bind:value={convert} class="select">
 				<option value="">sats</option>
-				{#each convertibles as { code, symbol, name }}
-					<option value={code}>{name} ({symbol})</option>
+				{#each convertibles as { code, symbol, name, multiplier, decimals }}
+					<option value={code}>
+						{name}
+
+						{#if currency && currency.code != code && +amount > 0}
+							{@const sats = (+amount * 10 ** currency.decimals * currency.multiplier) / 1000}
+
+							(~ {symbol}
+							{(sats / (multiplier * 10 ** (decimals - 3))).toFixed(decimals)})
+						{:else if !currency && +amount > 0}
+							(~ {symbol} {(+amount / (multiplier * 10 ** (decimals - 3))).toFixed(decimals)})
+						{:else}
+							({symbol})
+						{/if}
+					</option>
 				{/each}
 			</select>
 		</label>
