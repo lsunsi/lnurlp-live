@@ -7,13 +7,10 @@ export default {
 	darkMode: 'class',
 	content: [
 		'./src/**/*.{html,js,svelte,ts}',
-		join(require.resolve(
-			'@skeletonlabs/skeleton'),
-			'../**/*.{html,js,svelte,ts}'
-		)
+		join(require.resolve('@skeletonlabs/skeleton'), '../**/*.{html,js,svelte,ts}')
 	],
 	theme: {
-		extend: {},
+		extend: {}
 	},
-	plugins: [forms, skeleton({ themes: { preset: ["hamlindigo"] } })]
+	plugins: [forms, skeleton({ themes: { preset: ['hamlindigo'] } })]
 } satisfies Config;

@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { Avatar } from '@skeletonlabs/skeleton';
 	import type { PageServerData } from './$types';
+	import type { Currency } from '$lib';
 
 	export let data: PageServerData;
 
@@ -15,6 +16,59 @@
 
 	$: currency = data.currencies.find((c) => c.code == code);
 	$: convertible = convertibles.find((c) => c.code == convert);
+
+	$: minmax = calculateMinMax(currency, convertible);
+
+	const calculateMinMax = (currency?: Currency, convertible?: Currency) => {
+		// sats as sats
+		if (!currency && !convertible) {
+			return [data.minSendable / 1000, data.maxSendable / 1000];
+		}
+
+		// sats as currency
+		if (!currency && convertible && convertible.convertible) {
+			const min = (convertible.convertible.min * convertible.multiplier) / 1000;
+			const max = (convertible.convertible.max * convertible.multiplier) / 1000;
+			return [min, max];
+		}
+
+		// currency as sats
+		if (currency && !convertible) {
+			const scale = 10 ** currency.decimals;
+			const min = data.minSendable / (currency.multiplier * scale);
+			const max = data.maxSendable / (currency.multiplier * scale);
+			const minRounded = Math.round((min + Number.EPSILON) * scale) / scale;
+			const maxRounded = Math.round((max + Number.EPSILON) * scale) / scale;
+			return [minRounded, maxRounded];
+		}
+
+		// currency as currency
+		if (currency && convertible && convertible.convertible && convertible.code == currency.code) {
+			const scale = 10 ** currency.decimals;
+			const min = convertible.convertible.min / scale;
+			const max = convertible.convertible.max / scale;
+			const minRounded = Math.round((min + Number.EPSILON) * scale) / scale;
+			const maxRounded = Math.round((max + Number.EPSILON) * scale) / scale;
+			return [minRounded, maxRounded];
+		}
+
+		// currency1 as currency2
+		if (currency && convertible && convertible.convertible && convertible.code != currency.code) {
+			const scale = 10 ** currency.decimals;
+
+			const min =
+				(convertible.convertible.min * convertible.multiplier) / (scale * currency.multiplier);
+			const max =
+				(convertible.convertible.max * convertible.multiplier) / (scale * currency.multiplier);
+
+			const minRounded = Math.round((min + Number.EPSILON) * scale) / scale;
+			const maxRounded = Math.round((max + Number.EPSILON) * scale) / scale;
+
+			return [minRounded, maxRounded];
+		}
+
+		return null;
+	};
 
 	const submit = () => {
 		if (amount) {
@@ -61,8 +115,6 @@
 </div>
 
 <form on:submit|preventDefault={submit} class="pt-4">
-	<input type="hidden" name="callback" value={data.callback} />
-
 	<label class="label">
 		<span>Amount</span>
 		<div
@@ -78,7 +130,16 @@
 				</select>
 			{/if}
 
-			<input class="input" type="number" placeholder="123" bind:value={amount} />
+			<input
+				required
+				class="input"
+				type="number"
+				placeholder="123"
+				bind:value={amount}
+				min={minmax?.[0]}
+				max={minmax?.[1]}
+				step={currency ? 1 / 10 ** currency.decimals : 1}
+			/>
 		</div>
 	</label>
 

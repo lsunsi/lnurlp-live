@@ -1,6 +1,6 @@
-import { callback } from "$lib";
-import type { PageServerLoad } from "./$types";
-import bolt11 from "bolt11";
+import { callback } from '$lib';
+import type { PageServerLoad } from './$types';
+import bolt11 from 'bolt11';
 
 export const load: PageServerLoad = async ({ params, url }) => {
 	const comment = url.searchParams.get('comment');
@@ -11,5 +11,5 @@ export const load: PageServerLoad = async ({ params, url }) => {
 	const decimals = url.searchParams.get('decimals');
 
 	const c = await callback(atob(params.callback), params.amount, comment, convert);
-	return { ...c, decoded: bolt11.decode(c.pr), name, symbol, decimals: decimals && +decimals }
+	return { ...c, decoded: bolt11.decode(c.pr), name, symbol, decimals: decimals && +decimals };
 };
