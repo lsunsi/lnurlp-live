@@ -114,7 +114,7 @@
 	{/if}
 </div>
 
-<form on:submit|preventDefault={submit} class="pt-4">
+<form on:submit|preventDefault={submit} class="space-y-3 pt-4">
 	<label class="label">
 		<span>Amount</span>
 		<div

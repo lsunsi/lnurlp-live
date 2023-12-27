@@ -45,4 +45,4 @@
 	{/if}
 </div>
 
-<qr-code class="visible max-h-96 max-w-96" contents={`lightning:${data.pr}`} />
+<qr-code class="visible max-h-96 max-w-96 dark:invert" contents={`lightning:${data.pr}`} />
