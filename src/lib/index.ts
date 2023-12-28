@@ -37,7 +37,13 @@ type Callback = z.infer<typeof Callback>;
 
 const Callback = z.object({
 	pr: z.string(),
-	converted: z.number().optional()
+	converted: z
+		.object({
+			amount: z.number(),
+			fee: z.number(),
+			multiplier: z.number()
+		})
+		.optional()
 });
 
 export const callback = async (

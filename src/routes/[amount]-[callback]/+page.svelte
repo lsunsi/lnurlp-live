@@ -25,10 +25,17 @@
 <div class="flex place-content-center gap-x-2">
 	<span class="variant-ghost badge">{data.decoded.satoshis} satoshis</span>
 
-	{#if data.converted && data.decimals && data.symbol && data.name}
+	{#if data.converted && data.decimals && data.symbol && data.name && data.decoded.millisatoshis}
 		<span class="variant-ghost badge" title={data.name}>
 			{data.symbol}
-			{(data.converted / 10 ** data.decimals).toFixed(data.decimals)}
+			{(data.converted.amount / 10 ** data.decimals).toFixed(data.decimals)}
+		</span>
+		<span class="variant-ghost badge" title={data.name}>
+			{(Math.round((data.converted.fee / +data.decoded.millisatoshis) * 10000) / 100).toFixed(2)} fee
+		</span>
+		<span class="variant-ghost badge" title={data.name}>
+			{(1 / data.converted.multiplier / data.decimals) * 10e11}
+			{data.symbol}/฿
 		</span>
 	{/if}
 
