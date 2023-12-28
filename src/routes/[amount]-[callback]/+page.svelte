@@ -5,6 +5,8 @@
 
 	export let data: PageServerData;
 
+	const formatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
+
 	$: expiresAt = data.decoded.timeExpireDate && new Date(data.decoded.timeExpireDate * 1000);
 	let expiresIn = expiresAt && Math.trunc((+expiresAt - +new Date()) / 1000);
 
@@ -15,6 +17,12 @@
 
 		return () => clearInterval(interval);
 	});
+
+	const format = (n: number, digits: number): string =>
+		new Intl.NumberFormat(undefined, {
+			minimumFractionDigits: digits,
+			maximumFractionDigits: digits
+		}).format(n);
 </script>
 
 <svelte:head>
@@ -28,13 +36,16 @@
 	{#if data.converted && data.decimals && data.symbol && data.name && data.decoded.millisatoshis}
 		<span class="variant-ghost badge" title={data.name}>
 			{data.symbol}
-			{(data.converted.amount / 10 ** data.decimals).toFixed(data.decimals)}
+			{format(data.converted.amount / 10 ** data.decimals, data.decimals)}
 		</span>
 		<span class="variant-ghost badge" title={data.name}>
-			{(Math.round((data.converted.fee / +data.decoded.millisatoshis) * 10000) / 100).toFixed(2)} fee
+			{format(
+				Math.round((data.converted.fee / +data.decoded.millisatoshis) * 10000) / 100,
+				data.decimals
+			)}% fee
 		</span>
 		<span class="variant-ghost badge" title={data.name}>
-			{(1 / data.converted.multiplier / data.decimals) * 10e11}
+			{format(((1 / data.converted.multiplier) * 1e11) / 10 ** data.decimals, data.decimals)}
 			{data.symbol}/฿
 		</span>
 	{/if}
