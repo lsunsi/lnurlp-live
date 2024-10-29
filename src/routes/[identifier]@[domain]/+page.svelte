@@ -29,7 +29,7 @@
 		if (!currency && convertible && convertible.convertible) {
 			const min = (convertible.convertible.min * convertible.multiplier) / 1000;
 			const max = (convertible.convertible.max * convertible.multiplier) / 1000;
-			return [min, max];
+			return [Math.ceil(min), Math.floor(max)];
 		}
 
 		// currency as sats
